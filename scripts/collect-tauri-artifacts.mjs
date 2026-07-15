@@ -15,7 +15,6 @@ const artifactRules = {
   ],
   windows: [
     { extension: ".exe", name: `Bloom-${version}-win-x64.exe`, required: true },
-    { extension: ".msi", name: `Bloom-${version}-win-x64.msi`, required: false },
   ],
   linux: [
     { extension: ".AppImage", name: `Bloom-${version}-linux-x86_64.AppImage`, required: true },

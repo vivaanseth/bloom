@@ -268,7 +268,7 @@ Produce macOS, Windows, and Linux artifacts.
 Possible formats:
 
 macOS: DMG or application bundle
-Windows: MSI or NSIS installer
+Windows: NSIS installer
 Linux: AppImage and/or Debian package
 
 Completion criteria:

@@ -39,14 +39,17 @@ jobs:
             name: macos
             platform: macos
             build_args: --target universal-apple-darwin
+            bundle_args: --bundles dmg
           - os: windows-2025
             name: windows
             platform: windows
             build_args: ""
+            bundle_args: --bundles nsis
           - os: ubuntu-24.04
             name: linux
             platform: linux
             build_args: ""
+            bundle_args: --bundles appimage,deb
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
@@ -89,7 +92,7 @@ jobs:
       - run: cargo test --manifest-path src-tauri/Cargo.toml
       - name: Build Tauri app bundle
         shell: bash
-        run: npm run tauri:build -- ${{ matrix.build_args }}
+        run: npm run tauri:build -- ${{ matrix.build_args }} ${{ matrix.bundle_args }}
       - name: Collect release artifacts
         run: node scripts/collect-tauri-artifacts.mjs "${{ matrix.platform }}" "${VERSION#v}" release-dist
         shell: bash
