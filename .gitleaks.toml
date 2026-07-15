@@ -1,0 +1,14 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Generated dependency, build, release, and git metadata paths."
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)dist/''',
+  '''(^|/)src-tauri/target/''',
+  '''(^|/)src-tauri/gen/''',
+  '''(^|/)release-dist/''',
+  '''(^|/)release-assets/''',
+  '''(^|/)\.git/''',
+]

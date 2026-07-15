@@ -1,0 +1,41 @@
+# Node and frontend output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Rust and Tauri output
+src-tauri/target/
+src-tauri/gen/
+src-tauri/bundle/
+vite.config.js
+vite.config.d.ts
+
+# Local editor and OS files
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Local app data and release secrets
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.log
+*.pem
+*.key
+*.p12
+*.cer
+*.crt
+*.mobileprovision
+*.provisionprofile
+release-dist/
+release-assets/
+*.local

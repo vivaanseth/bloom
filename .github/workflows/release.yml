@@ -1,0 +1,142 @@
+name: Desktop app release
+
+on:
+  push:
+    tags:
+      - "v*.*.*-*"
+
+permissions:
+  contents: read
+
+env:
+  VERSION: ${{ github.ref_name }}
+
+jobs:
+  metadata:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: node scripts/verify-release-metadata.mjs "$VERSION"
+
+  build:
+    needs: metadata
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-15
+            name: macos
+            platform: macos
+            build_args: --target universal-apple-darwin
+          - os: windows-2025
+            name: windows
+            platform: windows
+            build_args: ""
+          - os: ubuntu-24.04
+            name: linux
+            platform: linux
+            build_args: ""
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - name: Install macOS universal targets
+        if: runner.os == 'macOS'
+        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
+      - name: Install Linux Tauri dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            curl \
+            file \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libssl-dev \
+            libwebkit2gtk-4.1-dev \
+            libxdo-dev \
+            patchelf \
+            rpm \
+            wget
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test
+      - run: npm run scan:privacy
+      - run: npm run build
+      - run: cargo fmt --check --manifest-path src-tauri/Cargo.toml
+      - run: cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --all-features -- -D warnings
+      - run: cargo test --manifest-path src-tauri/Cargo.toml
+      - name: Build Tauri app bundle
+        shell: bash
+        run: npm run tauri:build -- ${{ matrix.build_args }}
+      - name: Collect release artifacts
+        run: node scripts/collect-tauri-artifacts.mjs "${{ matrix.platform }}" "${VERSION#v}" release-dist
+        shell: bash
+      - uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0
+        with:
+          path: release-dist
+          format: cyclonedx-json
+          output-file: release-dist/Bloom-${{ github.ref_name }}-${{ matrix.name }}-sbom.cdx.json
+      - uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2
+        with:
+          subject-path: |
+            release-dist/*
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bloom-${{ matrix.name }}
+          path: release-dist/*
+          if-no-files-found: error
+
+  draft:
+    needs: [metadata, build]
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: bloom-*
+          path: release-assets
+          merge-multiple: true
+      - name: Generate checksums
+        working-directory: release-assets
+        shell: bash
+        run: |
+          find . -maxdepth 1 -type f ! -name SHASUMS256.txt -print0 | sort -z | xargs -0 sha256sum > SHASUMS256.txt
+          sha256sum --check SHASUMS256.txt
+      - run: node scripts/verify-release-assets.mjs release-assets "${VERSION#v}"
+      - name: Create draft prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          notes="docs/releases/${VERSION}.md"
+          gh release create "$VERSION" release-assets/* \
+            --draft \
+            --prerelease \
+            --title "Bloom $VERSION" \
+            --notes-file "$notes"

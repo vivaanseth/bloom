@@ -1,0 +1,22 @@
+name: Privacy concern
+description: Report a privacy or data-handling concern.
+title: "[Privacy]: "
+labels: ["privacy"]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include secrets, terminal history, private messages, or vulnerability details in public issues.
+  - type: textarea
+    id: concern
+    attributes:
+      label: Concern
+      description: What behavior or documentation worries you?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected handling
+      description: What should Bloom do instead?
+    validations:
+      required: true

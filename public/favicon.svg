@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Bloom">
+  <rect width="64" height="64" rx="18" fill="#171b1f"/>
+  <path d="M32 9c10 0 18 8 18 18v9c0 11-8 19-18 19S14 47 14 36v-9C14 17 22 9 32 9Z" fill="#f4d983"/>
+  <path d="M21 26c3-7 9-10 17-9 5 1 9 5 10 11-4-4-9-6-16-6-5 0-9 1-11 4Z" fill="#6bb7a8"/>
+  <path d="M18 36c4 3 8 5 14 5s10-2 14-5c-1 8-7 14-14 14s-13-6-14-14Z" fill="#fff1bd"/>
+  <circle cx="26" cy="33" r="3" fill="#1f2a2d"/>
+  <circle cx="38" cy="33" r="3" fill="#1f2a2d"/>
+  <path d="M27 42c3 2 7 2 10 0" fill="none" stroke="#1f2a2d" stroke-width="2" stroke-linecap="round"/>
+  <path d="M14 37c-4 0-7-3-7-7 5 0 8 2 10 6l-3 1Zm36 0c4 0 7-3 7-7-5 0-8 2-10 6l3 1Z" fill="#6bb7a8"/>
+</svg>

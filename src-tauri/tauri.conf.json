@@ -1,0 +1,72 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Bloom",
+  "version": "0.1.0-alpha.1",
+  "identifier": "io.github.vivaanseth.bloom",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "companion",
+        "title": "Bloom",
+        "width": 444,
+        "height": 480,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "resizable": false,
+        "visible": true,
+        "skipTaskbar": true
+      },
+      {
+        "label": "dashboard",
+        "title": "Bloom",
+        "width": 960,
+        "height": 680,
+        "minWidth": 780,
+        "minHeight": 560,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost; img-src 'self' data: asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "publisher": "Bloom contributors",
+    "homepage": "https://github.com/vivaanseth/bloom",
+    "copyright": "Copyright 2026 Bloom contributors",
+    "category": "Productivity",
+    "shortDescription": "A local-first desktop companion app shell.",
+    "longDescription": "Bloom is an unsigned alpha desktop companion app shell for macOS, Windows, and Linux. The current release includes the floating companion, tray, dashboard, synthetic activity, and mock suggestion surfaces only.",
+    "license": "MIT OR Apache-2.0",
+    "licenseFile": "../LICENSE-MIT",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "12.0"
+    },
+    "windows": {
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      }
+    },
+    "linux": {
+      "appimage": {
+        "bundleMediaFramework": false
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest a Bloom improvement.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user problem should this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the smallest useful version.
+    validations:
+      required: true
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Product constraints
+      options:
+        - label: This can work local-first.
+        - label: This does not require hidden monitoring.
+        - label: This preserves explicit user confirmation before execution.
